@@ -1,1 +1,1 @@
-web: bin/go-study
+web: bin/helloworld
