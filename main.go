@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/labstack/echo"
 )
@@ -45,7 +46,7 @@ func main() {
 		return c.String(http.StatusOK, "{\"token\":\""+token+"\"},{\"name\":\""+name+"\"}")
 	})
 	// サーバー起動
-	e.Logger.Fatal(e.Start(":1324"))
+	e.Logger.Fatal(e.Start(":" + os.Getenv("PORT")))
 }
 func helloWorld(c echo.Context) error {
 	return c.String(http.StatusOK, "hello world!!")
