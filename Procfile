@@ -1,1 +1,1 @@
-web: bin/go-naduna
+web: bin/go-study
