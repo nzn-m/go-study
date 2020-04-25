@@ -3,9 +3,8 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"os"
 
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 )
 
 type User struct {
@@ -24,6 +23,8 @@ func main() {
 	// ルーティング設定
 	e.GET("/helloworld", helloWorld)
 	e.POST("/login", func(c echo.Context) error {
+		fmt.Printf("u.Email : %v\n", u.Email)
+		fmt.Printf("u.Password : %v\n", u.Password)
 		r := new(User)
 		if err := c.Bind(r); err != nil {
 			return c.String(http.StatusBadRequest, err.Error())
@@ -41,12 +42,12 @@ func main() {
 			return c.String(http.StatusUnauthorized, "login fail")
 		}
 		// 暫定
-		token := "sampletoken"
+		token := "success"
 		name := "なずな"
 		return c.String(http.StatusOK, "{\"token\":\""+token+"\"},{\"name\":\""+name+"\"}")
 	})
 	// サーバー起動
-	e.Logger.Fatal(e.Start(":" + os.Getenv("PORT")))
+	e.Logger.Fatal(e.Start(":1323"))
 }
 func helloWorld(c echo.Context) error {
 	return c.String(http.StatusOK, "hello world!!")
