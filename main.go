@@ -1,54 +1,68 @@
 package main
 
 import (
-	"fmt"
+	"io"
 	"net/http"
+	"text/template"
 
-	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 )
 
+type Template struct {
+	templates *template.Template
+}
+
+func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
+	return t.templates.ExecuteTemplate(w, name, data)
+}
+
 type User struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Name     string `json:"Name"`
+	Mail     string `json:"Mail"`
+	Password string `json:"Password"`
 }
 
 func main() {
 	// サーバー用のインスタンスの取得
 	e := echo.New()
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"http://localhost:1323/", "http://localhost:1323/login/"},
+		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+	}))
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
+	t := &Template{
+		templates: template.Must(template.ParseGlob("template/*.html")),
+	}
+	e.Renderer = t
 	// ユーザー
 	u := User{
-		Email:    "me@example.com",
+		Name:     "nazuna",
+		Mail:     "me@example.com",
 		Password: "password",
 	}
 	// ルーティング設定
-	e.GET("/helloworld", helloWorld)
+	e.GET("/", rootHandler)
+	e.GET("/ok", okHandler)
 	e.POST("/login", func(c echo.Context) error {
-		fmt.Printf("u.Email : %v\n", u.Email)
-		fmt.Printf("u.Password : %v\n", u.Password)
 		r := new(User)
 		if err := c.Bind(r); err != nil {
 			return c.String(http.StatusBadRequest, err.Error())
 		}
-
-		//debug
-		fmt.Printf("u.Email : %v\n", u.Email)
-		fmt.Printf("u.Password : %v\n", u.Password)
-		fmt.Printf("r.Email : %v\n", r.Email)
-		fmt.Printf("r.Password : %v\n", r.Password)
-
-		// もしうえのEmailとcurlでにゅうりょくしたEmailがいしないか
-		//それか,うえのパスワードとcurlで入力したpasswordが一致しなければ,"login fail"としゅつりょく
-		if r.Email != u.Email || r.Password != u.Password {
+		if r.Mail != u.Mail || r.Password != u.Password {
 			return c.String(http.StatusUnauthorized, "login fail")
 		}
 		// 暫定
-		token := "success"
-		name := "なずな"
-		return c.String(http.StatusOK, "{\"token\":\""+token+"\"},{\"name\":\""+name+"\"}")
+		return c.JSON(http.StatusOK, r)
 	})
 	// サーバー起動
 	e.Logger.Fatal(e.Start(":1323"))
 }
-func helloWorld(c echo.Context) error {
-	return c.String(http.StatusOK, "hello world!!")
+
+func rootHandler(c echo.Context) error {
+	return c.Render(http.StatusOK, "index", nil)
+}
+func okHandler(c echo.Context) error {
+	return c.Render(http.StatusOK, "ok", nil)
 }

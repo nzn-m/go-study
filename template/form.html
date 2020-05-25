@@ -1,0 +1,19 @@
+{{define "content"}}
+<h1>HTMLファイルからPOSTでJSONデータを送信する</h1>
+<p>
+  URL:
+  <input
+    type="text"
+    id="url_post"
+    name="url"
+    size="100"
+    value="http://localhost:1323/login"
+  />
+</p>
+<p>email: <input type="text" id="email" size="30" name="email" /></p>
+<p>
+  password: <input type="password" id="password" size="30" name="password" />
+</p>
+<p><button id="button" type="button">submit</button></p>
+<textarea id="response" cols="120" rows="10" disabled></textarea>
+{{end}}

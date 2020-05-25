@@ -1,0 +1,100 @@
+{{define "index"}}
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>HTMLファイルからPOSTでJSONデータを送信する</title>
+    <script
+      type="text/javascript"
+      src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"
+    ></script>
+  </head>
+  <body>
+    <h1>HTMLファイルからPOSTでJSONデータを送信する</h1>
+    <p>
+      URL:
+      <input
+        type="text"
+        id="url_post"
+        name="url"
+        size="100"
+        value="http://localhost:1323/login"
+      />
+    </p>
+    <p>Name: <input type="text" id="Name" size="30" /></p>
+    <p>Mail: <input type="text" id="Mail" size="30" /></p>
+    <p>Password: <input type="text" id="Password" size="30" /></p>
+    <p><button id="button" type="button">submit</button></p>
+    <textarea id="response" cols="120" rows="10" disabled></textarea>
+    <script type="text/javascript">
+      // $(function () {
+      //   $("#response").html("Response Values");
+
+      //   $("#button").click(function (e) {
+      //     e.preventDefault();
+      //     var url = $("#url_post").val();
+
+      //     var JSONdata = {
+      //       Name: $("#Name").val(),
+      //       Mail: $("#Mail").val(),
+      //       Password: $("#Password").val(),
+      //     };
+
+      //     alert(JSON.stringify(JSONdata));
+
+      //     $.ajax({
+      //       type: "post",
+      //       url: url,
+      //       data: JSON.stringify(JSONdata),
+      //       contentType: "application/JSON",
+      //       dataType: "JSON",
+      //       scriptCharset: "utf-8",
+      //       success: function (data) {
+      //         // Success
+      //         alert("success");
+      //         alert(JSON.stringify(data));
+      //         $("#response").html(JSON.stringify(data));
+      //       },
+      //       error: function (data) {
+      //         // Error
+      //         alert("error");
+      //         alert(JSON.stringify(data));
+      //         $("#response").html(JSON.stringify(data));
+      //       },
+      //     });
+      //   });
+      // });
+      const submit = document.getElementById("button");
+      submit.addEventListener("click", () => {
+        const Name = document.getElementById("Name").value;
+        const Mail = document.getElementById("Mail").value;
+        const Password = document.getElementById("Password").value;
+        fetch(`/login`, {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            Name,
+            Mail,
+            Password,
+          }),
+        })
+          .then((res) => {
+            if (!response.ok) {
+              document.getElementById(
+                "response"
+              ).innerHTML = `ログインに失敗しました`;
+            }
+            return res.json();
+          })
+          .then((res) => {
+            document.getElementById("response").innerHTML = `
+          ${res.Name}さんがログインしました`;
+          });
+      });
+    </script>
+  </body>
+</html>
+
+{{end}}
