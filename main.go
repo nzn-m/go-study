@@ -37,10 +37,38 @@ func main() {
 	}
 	e.Renderer = t
 	// ユーザー
-	u := User{
+	// struct {
+	//         char *Name;
+	// 				char Mail;
+	// 				char Password;
+	// } nazuna, tomoyuki, ryoma;
+
+	// int main() {
+	//         nazuna.Name = "nazuna";
+	// 				nazuna.Mail = "nazuna@gmail.com";
+	// 				nazuna.Password = "password"
+	//         Boobs.Name = "Boobs";
+	// 				Boobs.Mail = "b@gmail.com";
+	// 				Boobs.Password = "admin"
+	// 				Hery.Name = "Hery";
+	// 				Hery.Mail = "Hery@gmail.com";
+	// 				Hery.Password = "hello"
+	// }
+
+	u1 := User{
 		Name:     "nazuna",
 		Mail:     "me@example.com",
 		Password: "password",
+	}
+	u2 := User{
+		Name:     "Boobs",
+		Mail:     "b@gmail.com",
+		Password: "admin",
+	}
+	u3 := User{
+		Name:     "Hery",
+		Mail:     "Hery@example.com",
+		Password: "hello",
 	}
 	// ルーティング設定
 	e.GET("/", rootHandler)
@@ -50,11 +78,15 @@ func main() {
 		if err := c.Bind(r); err != nil {
 			return c.String(http.StatusBadRequest, err.Error())
 		}
-		if r.Mail != u.Mail || r.Password != u.Password {
+		if r == u1 {
+			return c.JSON(http.StatusOK, r)
+		}
+
+		if r.Name == u1.Name && r.Mail == u1.Mail && r.Password == u1.Password || r.Name == u2.Name && r.Mail == u2.Mail && r.Password == u2.Password || r.Name == u3.Name && r.Mail == u3.Mail && r.Password == u3.Password {
+			return c.JSON(http.StatusOK, r)
+		} else {
 			return c.String(http.StatusUnauthorized, "login fail")
 		}
-		// 暫定
-		return c.JSON(http.StatusOK, r)
 	})
 	// サーバー起動
 	e.Logger.Fatal(e.Start(":1323"))
