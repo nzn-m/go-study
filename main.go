@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io"
 	"net/http"
 	"text/template"
@@ -70,6 +71,19 @@ func main() {
 		Mail:     "Hery@example.com",
 		Password: "hello",
 	}
+
+	challenge := &Challenge{
+        Id: "1",
+    }
+    users := []User{
+    }
+
+	people := [3]struct{u1, u2, u3}
+
+	for i, s := range people {
+		fmt.Printf("index: %d, Name: %s\n", i, s)
+	}
+
 	// ルーティング設定
 	e.GET("/", rootHandler)
 	e.GET("/ok", okHandler)
@@ -78,9 +92,9 @@ func main() {
 		if err := c.Bind(r); err != nil {
 			return c.String(http.StatusBadRequest, err.Error())
 		}
-		if r == u1 {
-			return c.JSON(http.StatusOK, r)
-		}
+		// if r == u1 {
+		// 	return c.JSON(http.StatusOK, r)
+		// }
 
 		if r.Name == u1.Name && r.Mail == u1.Mail && r.Password == u1.Password || r.Name == u2.Name && r.Mail == u2.Mail && r.Password == u2.Password || r.Name == u3.Name && r.Mail == u3.Mail && r.Password == u3.Password {
 			return c.JSON(http.StatusOK, r)
